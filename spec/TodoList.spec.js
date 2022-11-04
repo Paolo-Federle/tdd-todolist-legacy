@@ -12,7 +12,8 @@ describe("TodoList", () => {
     const expected = {
       id: 1,
       text: "turn the heating on!",
-      status: "incomplete"
+      status: "incomplete",
+      date: new Date().toDateString()
     }
 
     // execute
@@ -27,12 +28,14 @@ describe("TodoList", () => {
     const item1 = {
       id: 1,
       text: "turn the heating on!",
-      status: "incomplete"
+      status: "incomplete",
+      date: new Date().toDateString()
     }
     const item2 = {
       id: 2,
       text: "Do the washing up",
-      status: "incomplete"
+      status: "incomplete",
+      date: new Date().toDateString()
     }
     const expected = [item1, item2]
 
@@ -50,7 +53,8 @@ describe("TodoList", () => {
     const expected = {
       id: 1,
       text: "turn the heating on!",
-      status: "complete"
+      status: "complete",
+      date: new Date().toDateString()
     }
 
     // execute
@@ -101,7 +105,8 @@ describe("TodoList", () => {
     const expected = {
       id: 1,
       text: "turn the heating on!",
-      status: "incomplete"
+      status: "incomplete",
+      date: new Date().toDateString()
     }
 
     // execute
@@ -124,7 +129,8 @@ describe("TodoList", () => {
     const expected = {
       id: 1,
       text: "turn the heating on!",
-      status: "incomplete"
+      status: "incomplete",
+      date: new Date().toDateString()
     }
 
     // execute
@@ -141,4 +147,68 @@ describe("TodoList", () => {
     // execute, verify
     expect(() => todoList.deleteBy(1)).toThrowError("Item not found")
   })
+
+  it("Show only the first 20chars when displaying all items", () => {
+    // set up
+    for (let i = 0; i < 3; i++) {
+      todoList.create(`activity number ${i} which mean that`)
+    }
+
+    // execute
+    todoList.showAllReduced()
+
+    // verify
+    expect(todoList.showAllReduced()).toEqual([{
+      id: 1,
+      text: "activity number 0 wh...",
+      status: "incomplete",
+      date: new Date().toDateString()
+    },
+    {
+      id: 2,
+      text: "activity number 1 wh...",
+      status: "incomplete",
+      date: new Date().toDateString()
+    },
+    {
+      id: 3,
+      text: "activity number 2 wh...",
+      status: "incomplete", date: new Date().toDateString()
+
+    }])
+  })
+
+  it("To do items have dates when they were created", () => {
+    // set up
+    const item1 = todoList.create("cook pasta!")
+
+    // execute
+
+    // verify
+    expect(todoList.showAll()[0].date).toBe(new Date().toDateString())
+  })
+
+  it('search by day and see a list of todo items by the day they were created', () => {
+    // set up
+    todoList.create('cook carbonara')
+    todoList.create('Do shower')
+    todoList.create('finish exercise')
+    // execute
+
+    // verify
+    expect(todoList.filterDay(new Date().toDateString().substring(0, 3)).length).toBe(3)
+  })
+
+  it('If there are no todos for that day, show an empty list', () => {
+    // set up
+    todoList.create('cook carbonara')
+    todoList.create('Do shower')
+    todoList.create('finish exercise')
+    const tomorrow = new Date().getDate()+1
+    // execute
+
+    // verify
+    expect(todoList.filterDay(tomorrow).length).toBe(0)
+  })
+
 })
